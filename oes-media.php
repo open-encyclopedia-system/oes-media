@@ -4,7 +4,7 @@
  * Plugin Name: OES Media (OES Core Module)
  * Plugin URI: http://www.open-encyclopedia-system.org/
  * Description: Display media in an OES context.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Maren Welterlich-Strobl, Freie Universität Berlin, Center für Digitale Systeme an der Universitätsbibliothek
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html

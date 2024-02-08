@@ -237,28 +237,32 @@ function render_panel(array $block): void
  */
 function render_image_panel(array $block, string $content, bool $is_preview): void
 {
-    $data = $block['data'] ?? false;
-    $image = $data['figure'] ?? false;
-    if (empty($image) && $is_preview) echo '<span>' . __('No valid image selected.', 'oes') . '</span>';
-    else {
+    if ($is_preview) echo '<span>' . __('[Image Panel, rendered in frontend]', 'oes') . '</span>';
+    else{
 
-        /* make sure image is array */
-        if(is_int($image)) $image = acf_get_attachment($image);
+        $data = $block['data'] ?? false;
+        $image = $data['figure'] ?? false;
+        if (empty($image)) echo '<span>' . __('No valid image selected.', 'oes') . '</span>';
+        else {
 
-        $panelTitle = $data['figure_title'] ?? '';
-        if (empty($panelTitle) && $image['title']) $panelTitle = $image['title'];
+            /* make sure image is array */
+            if (is_int($image)) $image = acf_get_attachment($image);
 
-        echo oes_get_image_panel_html([
-            'figure' => $image,
-            'figure_number' => $data['figure_number'] ?? '',
-            'figure_include' => true
-        ], [
-            'label_prefix' => $data['figure_label'] ?? '',
-            'panel_title' => $panelTitle,
-            'bootstrap' => $data['figure_bootstrap'] ?? true,
-            'active' => $data['figure_expanded'] ?? true
-        ]);
+            $panelTitle = $data['figure_title'] ?? '';
+            if (empty($panelTitle) && $image['title']) $panelTitle = $image['title'];
 
+            echo oes_get_image_panel_html([
+                'figure' => $image,
+                'figure_number' => $data['figure_number'] ?? '',
+                'figure_include' => true
+            ], [
+                'label_prefix' => $data['figure_label'] ?? '',
+                'panel_title' => $panelTitle,
+                'bootstrap' => $data['figure_bootstrap'] ?? true,
+                'active' => $data['figure_expanded'] ?? true
+            ]);
+
+        }
     }
 }
 
@@ -274,15 +278,30 @@ function render_image_panel(array $block, string $content, bool $is_preview): vo
  */
 function render_gallery_panel(array $block, string $content, bool $is_preview): void
 {
-    $figures = $block['data']['gallery_repeater'] ?? false;
 
-    if (empty($figures) && $is_preview) echo '<span>' . __('No valid images selected.', 'oes') . '</span>';
-    else
-        echo oes_get_gallery_panel_html(
-            $figures,
-            [
-                'gallery_title' => $block['data']['gallery_title'] ?? '',
-                'bootstrap' => false
-            ]
-        );
+    if ($is_preview) echo '<span>' . __('[Gallery Panel, rendered in frontend]', 'oes') . '</span>';
+    else {
+
+        $figures = [];
+        $figureNumber = $block['data']['gallery_repeater'] ?? false;
+        if ($figureNumber)
+            for ($i = 0; $i < $figureNumber; $i++) {
+                if ($imageID = $block['data']['gallery_repeater_' . $i . '_gallery_figure'] ?? false)
+                    if ($figure = acf_get_attachment($imageID)) {
+                        $figures[$i] = [
+                            'gallery_figure' => $figure,
+                            'gallery_figure_number' => $block['data']['gallery_repeater_' . $i . '_gallery_figure_number'] ?? '',
+                        ];
+                    }
+            }
+        if (empty($figures)) echo '<span>' . __('No valid images selected.', 'oes') . '</span>';
+        else
+            echo oes_get_gallery_panel_html(
+                $figures,
+                [
+                    'gallery_title' => $block['data']['gallery_title'] ?? '',
+                    'bootstrap' => false
+                ]
+            );
+    }
 }
