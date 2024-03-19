@@ -58,6 +58,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 ## 1.2.2
 * change - remove namespace für \OES\Media\enqueue_scripts
 * improve - pdf display for gallery block
+* fix - gallery slider
 
 ## 1.2.1
 * fix - gallery block
