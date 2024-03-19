@@ -1,13 +1,10 @@
 <?php
 
-namespace OES\Media;
-
-
 /**
  * Include timeline assets.
  * @return void
  */
-function enqueue_scripts(): void
+function oes_media_enqueue_scripts(): void
 {
     $path = plugins_url(basename(__DIR__)) . '/../oes-media/assets/';
     wp_register_style('oes-media', $path . '/media.css');
@@ -450,7 +447,24 @@ function oes_get_image_panel_html(array $image, array $args = []): string
                 'additional-args' => $args
             ]);
 
-        if ($args['bootstrap']) {
+        if($args['pdf']){
+
+            return sprintf('<div class="oes-pdf-figure-container">' .
+                '<div class="%s">%s<span class="oes-caption-title">%s</span></div>' .
+                '<div class="oes-pdf-figure-box">' .
+                '<div class="oes-pdf-image"><img src="%s" alt="%s"></div>' .
+                '<div class="oes-pdf-text"><div class="oes-pdf-text-wrapper">%s</div></div>' .
+                '</div>' .
+                '</div>',
+                $args['pdf_title_class'] ?? 'oes-pdf-figure-title',
+                $args['label_prefix'] . $number . ': ',
+                $args['panel_title'],
+                ($image['figure']['url'] ?? ''),
+                ($image['figure']['alt'] ?? ''),
+                $caption);
+
+        }
+        elseif ($args['bootstrap']) {
             $id = 'oes_image_' . ($image['figure']['ID'] ?? rand());
             return sprintf('<div class="oes-panel-container" id="%s">' .
                 '<div class="oes-panel-wrapper">' .
@@ -515,9 +529,9 @@ function oes_get_modal_image_gallery(array $image, array $args = []): string
     $imageModalData = \OES\Figures\oes_get_modal_image_data($image);
 
     /* slider */
-    $slider = '<a onclick="oesToggleGalleryPanel(' . ($args['previous'] ?? '') . '" ' .
+    $slider = '<a onclick="oesToggleGalleryPanel(' . ($args['previous'] ?? '') . ')" ' .
         'class="previous oes-slider-button"><span class="fa fa-angle-left"></span></a>' .
-        '<a onclick="oesToggleGalleryPanel(' . ($args['next'] ?? '') . '" class="next oes-slider-button">' .
+        '<a onclick="oesToggleGalleryPanel(' . ($args['next'] ?? '') . ')" class="next oes-slider-button">' .
         '<span class="fa fa-angle-right"></span></a>';
 
     /**
