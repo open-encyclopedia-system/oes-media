@@ -164,10 +164,16 @@ function register_acf_blocks(): void
                     'type' => 'text',
                 ],
                 [
-                    'key' => 'field_gallery_number',
-                    'label' => 'Number',
-                    'name' => 'gallery_number',
+                    'key' => 'field_gallery_prefix',
+                    'label' => 'Title Prefix',
+                    'name' => 'gallery_prefix',
                     'type' => 'text',
+                ],
+                [
+                    'key' => 'field_gallery_number',
+                    'label' => 'Include Numbers in Title',
+                    'name' => 'gallery_number',
+                    'type' => 'true_false',
                 ],
                 [
                     'key' => 'field_gallery_repeater',
@@ -299,7 +305,9 @@ function render_gallery_panel(array $block, string $content, bool $is_preview): 
             echo oes_get_gallery_panel_html(
                 $figures,
                 [
+                    'label_prefix' => $block['data']['gallery_prefix'] ?? '',
                     'gallery_title' => $block['data']['gallery_title'] ?? '',
+                    'include_number_in_title' => $block['data']['include_number'] ?? false,
                     'bootstrap' => false
                 ]
             );

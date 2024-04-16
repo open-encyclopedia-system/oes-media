@@ -78,7 +78,21 @@ function oes_get_panel_html(string $content = '', array $args = []): string
         $args['id'] = 'panel_' . strtolower($id);
     }
 
-    if ($args['bootstrap']) {
+    if($args['pdf']){
+
+        $captionPrefix = $args['number_prefix'] . (empty($args['number']) ? '' : ' ') . $args['number'];
+        if(!empty($captionPrefix)) $captionPrefix .= ': ';
+        return sprintf('<div class="oes-pdf-panel-container oes-panel-container">' .
+                '<div class="oes-panel-wrapper">' .
+                '<div class="%s">%s<span class="oes-caption-title">%s</span></div>' .
+                '<div class="oes-pdf-panel-box oes-panel-bootstrap">%s</div>' .
+                '</div></div>',
+                $args['pdf_title_class'] ?? 'oes-pdf-panel-title',
+                $captionPrefix,
+                $args['caption'],
+                $content);
+    }
+    elseif ($args['bootstrap']) {
         $id = (isset($args['id']) && !empty($args['id']) ? $args['id'] : rand());
         return sprintf('<div class="oes-panel-container" id="%s">' .
             '<div class="oes-panel-wrapper">' .
@@ -152,6 +166,7 @@ function oes_get_gallery_panel_html(array $figures, array $args = []): string
         'gallery_title' => '',
         'include_in_list' => false,
         'label_separator' => ' ',
+        'include_number_in_title' => true,
         'active' => true,
         'pdf' => false,
         'pdf_title_class' => 'oes-pdf-figure-title',
@@ -247,12 +262,15 @@ function oes_get_gallery_panel_html(array $figures, array $args = []): string
         if ($prevIDs) array_unshift($prevIDs, $itemIDs[array_key_last($itemIDs)]);
 
 
-        if (sizeof($numbers) > 1) $numberString = $numbers[0] . ' - ' . end($numbers);
-        else $numberString = $numbers[0] ?? '';
+        $numberString = '';
+        if($args['include_number_in_title']) {
+            if (sizeof($numbers) > 1) $numberString = $numbers[0] . ' - ' . end($numbers);
+            else $numberString = $numbers[0] ?? '';
 
-        /* @var $editMode string check if in admin dashboard and edit mode (number is only computed in frontend) */
-        $editMode = isset($_POST['post_id']);
-        if (empty($numberString) || $editMode) $numberString = '% - %';
+            /* @var $editMode string check if in admin dashboard and edit mode (number is only computed in frontend) */
+            $editMode = isset($_POST['post_id']);
+            if (empty($numberString) || $editMode) $numberString = '% - %';
+        }
 
         $galleryString = '';
         if ($args['pdf']) {
@@ -448,6 +466,10 @@ function oes_get_image_panel_html(array $image, array $args = []): string
             ]);
 
         if($args['pdf']){
+
+            /* modify caption */
+            $imageModalData = \OES\Figures\oes_get_modal_image_data($image['figure']);
+            $caption = $imageModalData['caption'];
 
             return sprintf('<div class="oes-pdf-figure-container">' .
                 '<div class="%s">%s<span class="oes-caption-title">%s</span></div>' .
