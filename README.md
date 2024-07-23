@@ -14,10 +14,10 @@ We are working on a detailed user manual and a technical function reference. Sup
 ### Dependencies
 
 OES Media depends on the OES Core Plugin:
-* OES Core, version 2.3.0, URL: https://github.com/open-encyclopedia-system/oes-core.
+* OES Core, version 2.3.3, URL: https://github.com/open-encyclopedia-system/oes-core.
 
 OES Media depends on the WordPress plugin ACF PRO:
-* Advanced Custom Fields, version 6.2.4, URL: https://www.advancedcustomfields.com/pro/.
+* Advanced Custom Fields, version 6.3.4, URL: https://www.advancedcustomfields.com/pro/.
 
 
 ### Installation
@@ -54,6 +54,10 @@ This program is free software; you can redistribute it and/or modify it under th
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 # Changelog
+
+## 1.2.4
+* improve - panel calls to fit OES Core 2.3.3
+* remove - media.css, moved to OES Core
 
 ## 1.2.3
 * add - prefix field for gallery title in gallery block

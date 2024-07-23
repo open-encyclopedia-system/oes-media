@@ -38,29 +38,12 @@ function register_acf_blocks(): void
                     'type' => 'text',
                 ],
                 [
-                    'key' => 'block_field__panel_number',
-                    'label' => 'Number',
-                    'name' => 'panel_number',
-                    'type' => 'text',
-                ],
-                [
-                    'key' => 'block_field__panel_number_prefix',
-                    'label' => 'Number Prefix',
-                    'name' => 'panel_number_prefix',
-                    'type' => 'text',
-                ],
-                [
                     'key' => 'block_field__panel_expanded',
                     'label' => 'Expanded',
                     'name' => 'panel_expanded',
                     'type' => 'true_false',
-                ],
-                [
-                    'key' => 'block_field__panel_class',
-                    'label' => 'Class',
-                    'name' => 'panel_class',
-                    'type' => 'text',
-                ],
+                    'default_value' => true
+                ]
             ],
             'location' => [[[
                 'param' => 'block',
@@ -99,7 +82,7 @@ function register_acf_blocks(): void
                 [
                     'key' => 'field_figure_title',
                     'label' => 'Title',
-                    'instructions' => 'Image title if empty',
+                    'instructions' => 'Image title if empty, ignore if "none"',
                     'name' => 'figure_title',
                     'type' => 'text',
                 ],
@@ -107,24 +90,14 @@ function register_acf_blocks(): void
                     'key' => 'field_figure_number',
                     'label' => 'Number',
                     'name' => 'figure_number',
-                    'type' => 'text',
-                ],
-                [
-                    'key' => 'field_figure_label',
-                    'label' => 'Label',
-                    'name' => 'figure_label',
-                    'type' => 'text',
+                    'instructions' => 'Include computed number in panel title',
+                    'type' => 'true_false',
+                    'default_value' => true
                 ],
                 [
                     'key' => 'field_figure_expanded',
                     'label' => 'Expanded',
                     'name' => 'figure_expanded',
-                    'type' => 'true_false',
-                ],
-                [
-                    'key' => 'field_figure_bootstrap',
-                    'label' => 'Use Bootstrap',
-                    'name' => 'figure_bootstrap',
                     'type' => 'true_false',
                     'default_value' => true
                 ]
@@ -152,6 +125,7 @@ function register_acf_blocks(): void
             ],
         ]);
 
+        /* @oesLegacy leave repeater field, event though gallery field would be better */
         acf_add_local_field_group([
             'key' => 'group_oes_gallery_panel',
             'title' => 'OES Gallery Panel',
@@ -159,14 +133,8 @@ function register_acf_blocks(): void
                 [
                     'key' => 'field_gallery_title',
                     'label' => 'Title',
-                    'instructions' => 'image title if empty',
+                    'instructions' => 'Ignore if "none"',
                     'name' => 'gallery_title',
-                    'type' => 'text',
-                ],
-                [
-                    'key' => 'field_gallery_prefix',
-                    'label' => 'Title Prefix',
-                    'name' => 'gallery_prefix',
                     'type' => 'text',
                 ],
                 [
@@ -174,6 +142,13 @@ function register_acf_blocks(): void
                     'label' => 'Include Numbers in Title',
                     'name' => 'gallery_number',
                     'type' => 'true_false',
+                ],
+                [
+                    'key' => 'field_gallery_expanded',
+                    'label' => 'Expanded',
+                    'name' => 'gallery_expanded',
+                    'type' => 'true_false',
+                    'default_value' => true
                 ],
                 [
                     'key' => 'field_gallery_repeater',
@@ -188,13 +163,6 @@ function register_acf_blocks(): void
                             'label' => 'Image',
                             'name' => 'gallery_figure',
                             'type' => 'image',
-                        ],
-                        [
-                            'key' => 'field_gallery_figure_number',
-                            'instructions' => 'compute on empty',
-                            'label' => 'Number',
-                            'name' => 'gallery_figure_number',
-                            'type' => 'text',
                         ]
                     ]
                 ],
@@ -218,13 +186,10 @@ function register_acf_blocks(): void
 function render_panel(array $block): void
 {
     if ($data = $block['data'] ?? false)
-        echo '<div class="' . ($data['panel_class'] ?? '') . '">' .
+        echo '<div class="' . ($block['className'] ?? '') . '" id="' . ($block['anchor'] ?? '') . '">' .
             oes_get_panel_html('<InnerBlocks />', [
                 'caption' => $data['panel_title'] ?? '',
-                'number-prefix' => $data['panel_number_prefix'] ?? '',
-                'number' => $data['panel_number'] ?? '',
-                'bootstrap' => false,
-                'active' => isset($_POST['post']) ?
+                'active' => is_admin() ?
                     true :
                     ($data['panel_expanded'] ?? false)
             ]) .
@@ -244,31 +209,16 @@ function render_panel(array $block): void
 function render_image_panel(array $block, string $content, bool $is_preview): void
 {
     if ($is_preview) echo '<span>' . __('[Image Panel, rendered in frontend]', 'oes') . '</span>';
-    else{
-
-        $data = $block['data'] ?? false;
-        $image = $data['figure'] ?? false;
+    else {
+        $image = $block['data']['figure'] ?? false;
         if (empty($image)) echo '<span>' . __('No valid image selected.', 'oes') . '</span>';
-        else {
-
-            /* make sure image is array */
-            if (is_int($image)) $image = acf_get_attachment($image);
-
-            $panelTitle = $data['figure_title'] ?? '';
-            if (empty($panelTitle) && $image['title']) $panelTitle = $image['title'];
-
-            echo oes_get_image_panel_html([
-                'figure' => $image,
-                'figure_number' => $data['figure_number'] ?? '',
-                'figure_include' => true
-            ], [
-                'label_prefix' => $data['figure_label'] ?? '',
-                'panel_title' => $panelTitle,
-                'bootstrap' => $data['figure_bootstrap'] ?? true,
-                'active' => $data['figure_expanded'] ?? true
+        else
+            echo oes_get_image_panel_html(
+                $image, [
+                'add_number' => $block['data']['figure_number'] ?? true,
+                'caption' => $block['data']['figure_title'] ?? '',
+                'is_expanded' => (bool)($block['data']['figure_expanded'] ?? true)
             ]);
-
-        }
     }
 }
 
@@ -293,22 +243,17 @@ function render_gallery_panel(array $block, string $content, bool $is_preview): 
         if ($figureNumber)
             for ($i = 0; $i < $figureNumber; $i++) {
                 if ($imageID = $block['data']['gallery_repeater_' . $i . '_gallery_figure'] ?? false)
-                    if ($figure = acf_get_attachment($imageID)) {
-                        $figures[$i] = [
-                            'gallery_figure' => $figure,
-                            'gallery_figure_number' => $block['data']['gallery_repeater_' . $i . '_gallery_figure_number'] ?? '',
-                        ];
-                    }
+                    if ($figure = acf_get_attachment($imageID))
+                        $figures[] = $figure;
             }
         if (empty($figures)) echo '<span>' . __('No valid images selected.', 'oes') . '</span>';
         else
             echo oes_get_gallery_panel_html(
                 $figures,
                 [
-                    'label_prefix' => $block['data']['gallery_prefix'] ?? '',
-                    'gallery_title' => $block['data']['gallery_title'] ?? '',
-                    'include_number_in_title' => $block['data']['include_number'] ?? false,
-                    'bootstrap' => false
+                    'caption' => $block['data']['gallery_title'] ?? '',
+                    'add_number' => $block['data']['gallery_number'] ?? false,
+                    'is_expanded' => (bool)($block['data']['gallery_expanded'] ?? true)
                 ]
             );
     }

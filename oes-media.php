@@ -4,8 +4,9 @@
  * Plugin Name: OES Media (OES Core Module)
  * Plugin URI: http://www.open-encyclopedia-system.org/
  * Description: Display media in an OES context.
- * Version: 1.2.3
+ * Version: 1.2.4
  * Author: Maren Welterlich-Strobl, Freie Universität Berlin, Center für Digitale Systeme an der Universitätsbibliothek
+ * Author URI: https://www.cedis.fu-berlin.de/cedis/mitarbeiter/beschaeftigte/mstrobl.html
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -39,9 +40,6 @@ add_action('oes/plugins_loaded', function () {
         /* exit early if OES Plugin was not completely initialized */
         global $oes;
         if (!$oes || !property_exists($oes, 'initialized') || !$oes->initialized) return;
-
-        include_once(__DIR__ . '/includes/functions.php');
-        add_action('wp_enqueue_scripts', 'oes_media_enqueue_scripts');
 
         /* include ACF media blocks */
         include_once(__DIR__ . '/includes/blocks/functions-blocks.php');
