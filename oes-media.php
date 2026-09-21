@@ -9,12 +9,11 @@
  * Description:        Provides media display functionality in OES projects using ACF Pro.
  *                     Deprecated: This plugin has been replaced by the media blocks in OES Core as of version 2.4.0.
  * Version:            1.3.0
- * Author:             Maren Welterlich-Strobl, Freie Universität Berlin, FUB-IT
- * Author URI:         https://www.it.fu-berlin.de/die-fub-it/mitarbeitende/mstrobl.html
+ * Author:             Maren Welterlich-Strobl, Freie Universität Berlin, FUB-IT, Digitale Forschungsinfrastrukturen
+ * Author URI:         https://www.fu-berlin.de/
  * Requires at least:  6.0
  * Tested up to:       6.8.2
  * Requires PHP:       7.4
- * Tags:               oes, media, acf, deprecated, legacy, plugin-addon, encyclopedia
  * License:            GPLv2 or later
  * License URI:        https://www.gnu.org/licenses/gpl-2.0.html
  *
