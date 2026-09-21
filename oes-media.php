@@ -6,7 +6,7 @@
  * @wordpress-plugin
  * Plugin Name:        OES Media (Legacy OES Core Module)
  * Plugin URI:         https://www.open-encyclopedia-system.org/
- * Description:        Provides media display functionality in OES projects using ACF Pro.
+ * Description:        Provides media display functionality in OES application using ACF Pro.
  *                     Deprecated: This plugin has been replaced by the media blocks in OES Core as of version 2.4.0.
  * Version:            1.3.0
  * Author:             Maren Welterlich-Strobl, Freie Universität Berlin, FUB-IT, Digitale Forschungsinfrastrukturen
